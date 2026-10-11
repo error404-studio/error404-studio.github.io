@@ -3,6 +3,8 @@
   const panel=document.querySelector('#panel-body'), dialog=document.querySelector('#content-dialog');
   let generation=0, hlsPromise=null, current=null;
 
+  // Film type: explicit 'type' wins, otherwise inferred from the file (.m3u8 = HLS stream, anything else = MP4).
+  const kind=film=>film.type||(/\.m3u8(\?|$)/i.test(film.src||'')?'hls':'mp4');
   function releasePlayer(){
     if(!current)return;
     const {video,hls,poster,frame}=current;
@@ -34,7 +36,7 @@
   }
   async function playFilm(film,media,poster,status){
     releasePlayer();status.hidden=true;
-    if(film.type==='hls'&&film.src.startsWith('https://error404-studio-films.zts2v8c4cw.chatgpt.site/preview-media/')){
+    if(kind(film)==='hls'&&film.src.startsWith('https://error404-studio-films.zts2v8c4cw.chatgpt.site/preview-media/')){
       const filmUrl=new URL(film.src),key=filmUrl.pathname.split('/')[2];
       const frame=document.createElement('iframe');
       frame.src=filmUrl.origin+'/player.html?film='+encodeURIComponent(key);
@@ -55,7 +57,7 @@
       poster.focus();
     };
     video.addEventListener('error',failed);
-    if(film.type!=='hls'||video.canPlayType('application/vnd.apple.mpegurl')){
+    if(kind(film)!=='hls'||video.canPlayType('application/vnd.apple.mpegurl')){
       video.src=film.src;tryPlay(video);return;
     }
     try{
@@ -77,7 +79,7 @@
     const poster=document.createElement('button');poster.type='button';poster.className='project-play';
     poster.dataset.noTextPixels='';poster.setAttribute('aria-label','Play '+film.title);
     const image=document.createElement('img');image.src=film.poster;image.alt='';
-    image.width=film.width;image.height=film.height;image.loading='lazy';image.decoding='async';
+    image.width=film.width||1920;image.height=film.height||1080;image.loading='lazy';image.decoding='async';
     if(film.posterFit==='contain')image.style.objectFit='contain';
     if(film.posterScale){image.style.transform='scale('+film.posterScale+')';image.style.transformOrigin=film.posterOrigin||'center';}
     const icon=document.createElement('span');icon.className='project-play-icon';icon.setAttribute('aria-hidden','true');
@@ -99,8 +101,9 @@
     try{
       const films=await catalog();
       if(ownGeneration!==generation||!dialog.open||!gallery.isConnected)return;
-      const work=films.filter(film=>film.section!=='studio');
-      const studio=films.filter(film=>film.section==='studio');
+      const shown=films.filter(film=>film&&film.src&&!film.hide);
+      const work=shown.filter(film=>film.section!=='studio');
+      const studio=shown.filter(film=>film.section==='studio');
       gallery.replaceChildren(...work.map(card));
       if(studio.length){
         const section=document.createElement('section');section.className='studio-showcase';section.setAttribute('aria-labelledby','studio-title');

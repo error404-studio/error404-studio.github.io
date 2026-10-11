@@ -1,0 +1,77 @@
+# Pages CMS – editor webu error404creative.com (https://app.pagescms.org)
+# Nové videá nahrávaj do priečinka "videa", náhľady do "nahlady".
+
+media:
+  input: ""
+  output: ""
+  extensions: [mp4, m4v, mov, m3u8, jpg, jpeg, png, webp, gif]
+
+content:
+  - name: portfolio
+    label: Portfólio – filmy
+    description: Poradie filmov zmeníš potiahnutím. Po kliknutí na Save sa zmena objaví na webe asi do 2 minút.
+    type: file
+    path: portfolio.json
+    format: json
+    list:
+      collapsible:
+        collapsed: true
+        summary: "{fields.title}"
+    fields:
+      - name: title
+        label: Názov filmu
+        type: string
+        required: true
+      - name: shortTitle
+        label: Krátky názov na náhľade
+        description: Veľký text cez náhľad, napr. TIPOS alebo J&T.
+        type: string
+      - name: src
+        label: Video
+        description: MP4 súbor (alebo index.m3u8 pri starších filmoch). Nové videá nahraj do priečinka videa.
+        type: file
+        required: true
+        options:
+          path: videa
+          extensions: [mp4, m4v, mov, m3u8]
+      - name: poster
+        label: Náhľadový obrázok
+        description: Obrázok, ktorý sa ukáže pred spustením (ideálne 1920×1080).
+        type: image
+        required: true
+        options:
+          path: nahlady
+      - name: section
+        label: Sekcia
+        description: Portfólio, alebo spodná časť MEET ERROR404.
+        type: select
+        options:
+          values:
+            - value: work
+              label: Portfólio
+            - value: studio
+              label: MEET ERROR404 (štúdio)
+      - name: hide
+        label: Skryť z webu
+        type: boolean
+      - name: type
+        label: Typ (automaticky)
+        type: string
+        hidden: true
+      - name: width
+        label: Šírka
+        type: number
+        hidden: true
+      - name: height
+        label: Výška
+        type: number
+        hidden: true
+      - name: posterScale
+        type: number
+        hidden: true
+      - name: posterOrigin
+        type: string
+        hidden: true
+      - name: posterFit
+        type: string
+        hidden: true
