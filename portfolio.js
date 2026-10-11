@@ -15,10 +15,10 @@
     poster.hidden=false;
   }
   function catalog(){
-    return fetch('portfolio.json?v=public19-20260928',{cache:'no-store'}).then(response=>{
+    return fetch('portfolio.json?v=cms2-20261011',{cache:'no-store'}).then(response=>{
       if(!response.ok)throw new Error('Portfolio unavailable');
       return response.json();
-    });
+    }).then(data=>Array.isArray(data)?data:(data&&Array.isArray(data.films)?data.films:[]));
   }
   function hlsLibrary(){
     if(window.Hls)return Promise.resolve(window.Hls);
