@@ -10,7 +10,7 @@
       "shortTitle": "MiddleFinger"
     },
     {
-      "title": "ČSOB / Home",
+      "title": "CSOB / Home",
       "src": "assets/media/frameio/csobhome/index.m3u8",
       "poster": "assets/media/frameio/csobhome-poster.jpg",
       "type": "hls",
@@ -19,13 +19,22 @@
       "shortTitle": "ČSOB"
     },
     {
-      "title": "ČSOB / Bistro",
+      "title": "CSOB / Bistro",
       "src": "assets/media/frameio/csobbistro/index.m3u8",
       "poster": "assets/media/frameio/csobbistro-poster.jpg",
       "type": "hls",
       "width": 1920,
       "height": 1080,
       "shortTitle": "ČSOB"
+    },
+    {
+      "title": "CSOB / Pujcky",
+      "shortTitle": "ČSOB",
+      "src": "videa/csob-pujcky/index.m3u8",
+      "poster": "nahlady/csob-pujcky.jpg",
+      "type": "hls",
+      "width": 1920,
+      "height": 1080
     },
     {
       "title": "JT / 20 Years",
