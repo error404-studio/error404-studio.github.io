@@ -9,14 +9,13 @@ media:
 content:
   - name: portfolio
     label: Portfólio – filmy
-    description: Poradie filmov zmeníš potiahnutím. Po kliknutí na Save sa zmena objaví na webe asi do 2 minút.
+    description: Film otvoríš kliknutím na názov. Poradie zmeníš potiahnutím za úchyt vľavo, nový film pridáš tlačidlom Add an item dole. Po Save sa zmena objaví na webe asi do 2 minút.
     type: file
     path: portfolio.json
     format: json
     fields:
       - name: films
         label: Filmy
-        description: Poradie zmeníš potiahnutím za úchyt vľavo. Nový film pridáš tlačidlom Add an item dole.
         type: object
         list:
           collapsible:
