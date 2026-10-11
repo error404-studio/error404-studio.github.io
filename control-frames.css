@@ -1,0 +1,47 @@
+/* Local preview: measured red stepped frames on functional text controls. */
+.site .control-frame-host {
+  position: relative;
+  border-bottom: var(--control-frame-bottom-width, 0px) solid transparent;
+  text-decoration: none;
+}
+.site .control-frame-host:is(:hover, :focus-visible, :active) {
+  text-decoration: none;
+  border-bottom-color: transparent;
+}
+.site .control-frame-host:focus-visible {
+  outline: none;
+}
+.control-frame-host > .control-hover-frame {
+  position: absolute;
+  display: block;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 4;
+}
+.control-hover-frame > path {
+  fill: none;
+  stroke: #ff2929;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  transition: none;
+}
+.control-frame-active > .control-hover-frame > path {
+  stroke-dashoffset: 0;
+  opacity: 1;
+  transition: stroke-dashoffset .7s linear;
+}
+body.motion-off .control-hover-frame > path {
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .control-frame-active > .control-hover-frame > path {
+    transition: none;
+  }
+}
