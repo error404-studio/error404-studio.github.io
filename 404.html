@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<title>404 — Play the wrong level | ERROR 404</title>
+<link rel="icon" type="image/png" href="/assets/logo-red-original.png">
+<link rel="stylesheet" href="/404-game.css?v=game-nav-20260929">
+<link rel="stylesheet" href="/control-frames.css">
+<script src="/game-start-audio.js?v=20260928-start-only" defer></script>
+<script src="/404-game.js?v=20260928-start-only" defer></script>
+<script src="/404-background.js" defer></script>
+<script src="/control-frames.js" defer></script>
+</head>
+<body id="site" class="site" data-controls="joined">
+<canvas id="game-background" aria-hidden="true"></canvas>
+<!-- Local version 2026-09-28. Source: latest explicit user instruction relayed
+     by root, verified today: functional Pac-Man-style play, our robot fleeing
+     exactly ONE monster. This supersedes the decorative wandering animation.
+     Head: unchanged original PNG crop (1594,602,667,589). Original maze layout.
+     Previous 404 preserved outside dist as 404_BEFORE_PLAYABLE_20260928.html.
+     Latest explicit UI correction, 2026-09-28: remove the small pause button,
+     duplicate ready/status copy and long secondary instructions. Enlarge and
+     simplify visible controls to arrow keycaps + MOVE and P + PAUSE.
+     Latest user addition: prominent high score and an invitation to beat it.
+     Prototype record is browser-local, starts at zero and has no online ranking.
+     Latest request adds a nickname to a record, including an existing unnamed
+     numeric record. Original numeric storage is preserved; no browser reload.
+     Latest request: a prominent desktop Top 10 next to the game, with voluntary
+     nickname submission for completed runs, including scores below the record.
+     This is browser-local play data, not visitor tracking or a global ranking. -->
+<main class="page">
+  <header class="topbar">
+    <a class="home" href="/" aria-label="Back to home">← HOME</a>
+    <nav aria-label="Main navigation">
+      <a href="/#portfolio" aria-label="Work"><span class="nav-label">WORK</span></a>
+      <a href="/#contact" aria-label="Contact"><span class="nav-label">CONTACT</span></a>
+      <a href="/#about" aria-label="About"><span class="nav-label">ABOUT</span></a>
+    </nav>
+  </header>
+  <div class="game-stage">
+  <h1>WRONG LEVEL<br>GOOD COMPANY</h1>
+  <div class="game-layout">
+  <section class="game" aria-label="Robot maze game">
+    <div class="hud" aria-label="Game score" hidden>
+      <div><span>SCORE</span><strong id="score">00000</strong></div>
+      <div><span>DOTS</span><strong id="dots">0</strong></div>
+      <div><span>LIVES</span><strong id="lives" class="lives-value">3</strong></div>
+    </div>
+    <div class="board" id="board" data-phase="ready">
+      <canvas id="game-canvas" width="588" height="476" tabindex="0" role="application" aria-label="Robot maze. Arrow keys or W A S D move. P or Escape pauses." aria-describedby="game-instructions game-status">Use a browser with canvas support to play the robot maze.</canvas>
+      <div class="overlay" id="game-overlay">
+        <h2 id="overlay-title">BEAT THE HIGH SCORE</h2>
+        <p id="overlay-copy" hidden></p>
+        <button class="primary" type="button" id="start-game">START GAME</button>
+      </div>
+    </div>
+    <div class="game-bottom">
+      <p class="game-status sr-only" id="game-status" role="status" aria-live="polite">Game ready.</p>
+    </div>
+  <div class="instructions" id="game-instructions" role="group" aria-label="Arrow keys or WASD move. P or Escape pauses. Tab leaves the game.">
+    <span class="control-group"><span class="keycaps" aria-label="Arrow keys"><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd></span><span>MOVE</span></span>
+    <span class="control-group"><kbd>P</kbd><span>PAUSE</span></span>
+  </div>
+  <div class="mobile-controls" id="touch-controls" aria-label="Touch game controls">
+    <div class="direction-pad" role="group" aria-label="Choose a direction">
+      <button id="touch-up" class="direction-up" type="button" aria-label="Move up">↑</button>
+      <button id="touch-left" class="direction-left" type="button" aria-label="Move left">←</button>
+      <button id="touch-right" class="direction-right" type="button" aria-label="Move right">→</button>
+      <button id="touch-down" class="direction-down" type="button" aria-label="Move down">↓</button>
+    </div>
+    <button type="button" class="touch-pause" id="touch-pause">PAUSE</button>
+  </div>
+  </section>
+  <aside class="leaderboard" aria-labelledby="leaderboard-title" aria-describedby="leaderboard-scope">
+    <h2 id="leaderboard-title">HIGH SCORES</h2>
+    <p class="leaderboard-challenge">CAN YOU BEAT THEM?</p>
+    <div class="high-score" aria-label="Top score saved in this browser">
+      <div class="high-score-label">TOP SCORE</div>
+      <strong id="high-score">00000</strong>
+      <div class="high-score-name-row" id="high-score-name-row">
+        <span id="high-score-name" hidden></span>
+        <button class="add-name" id="add-score-name" type="button" hidden>ADD YOUR NAME</button>
+      </div>
+      <form class="name-form" id="score-name-form" novalidate hidden>
+        <p class="name-caption" id="score-name-caption"></p>
+        <label class="sr-only" for="score-name-input">Your name or nickname, up to 16 characters</label>
+        <div class="name-fields">
+          <input id="score-name-input" name="nickname" type="text" maxlength="16" autocomplete="nickname" spellcheck="false" placeholder="YOUR NAME" aria-describedby="score-name-error">
+          <button type="submit" class="save-name">SAVE</button>
+          <button type="button" class="close-name" id="close-score-name" aria-label="Skip name and play again">×</button>
+        </div>
+        <p class="name-error" id="score-name-error" role="alert" hidden></p>
+      </form>
+      <span class="sr-only" id="score-name-message" role="status" aria-live="polite"></span>
+    </div>
+    <ol class="leaderboard-list" id="leaderboard-list" aria-label="Top ten scores"></ol>
+    <p class="leaderboard-empty" id="leaderboard-empty">BE THE FIRST TO LEAVE A SCORE.</p>
+    <button class="primary submit-score" id="submit-run-score" type="button" hidden>ADD YOUR SCORE</button>
+    <p class="leaderboard-feedback" id="leaderboard-feedback" role="status" aria-live="polite" hidden></p>
+    <p class="sr-only" id="leaderboard-scope">Scores are saved in this browser.</p>
+  </aside>
+  </div>
+  </div>
+  <noscript><p class="noscript">This game needs JavaScript. <a href="/">Return home</a>.</p></noscript>
+</main>
+</body>
+</html>
