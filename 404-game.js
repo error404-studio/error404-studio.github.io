@@ -64,24 +64,37 @@
     }
     restart() {
       this.score = 0; this.lives = 1; this.elapsed = 0;   // one try per game (2026-10-12)
+      this.level = 1;
       this.phase = 'ready'; this.powerRemaining = 0; this.combo = 0;
+      this.fillPellets();
+      this.resetActors();
+    }
+    fillPellets() {
       this.pellets = new Map();
       for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
         if (walkable(x, y)) this.pellets.set(key(x, y), MAZE[y][x] === 'o' ? 50 : 10);
       }
       this.pellets.delete(key(PLAYER_START.x, PLAYER_START.y));
       this.initialPellets = this.pellets.size;
-      this.resetActors();
     }
+    // Levels (2026-10-12): clearing every dot opens the next, harder level.
+    // The score and the one life carry on; the monster gets faster, power
+    // gets shorter and the monster stops wandering off to its corner.
+    get monsterSpeed() { return Math.min(5, 4.1 + 0.3 * (this.level - 1)); }
+    get frightSpeed() { return Math.min(4, 3 + 0.15 * (this.level - 1)); }
+    get powerDuration() { return Math.max(3, 7 - (this.level - 1)); }
+    get scatterTime() { return Math.max(0, 5 - (this.level - 1)); }
+    get releaseDelay() { return Math.max(0.6, 1.5 - 0.2 * (this.level - 1)); }
     resetActors() {
       this.player = makeActor(PLAYER_START);
-      this.monster = Object.assign(makeActor(MONSTER_START), { returning: false, release: 1.5 });
+      this.monster = Object.assign(makeActor(MONSTER_START), { returning: false, release: this.releaseDelay });
       this.queuedDirection = null; this.powerRemaining = 0; this.combo = 0;
     }
     start() {
       if (this.phase === 'won' || this.phase === 'gameover') this.restart();
+      if (this.phase === 'level-clear') { this.level += 1; this.fillPellets(); this.resetActors(); }
       if (this.phase === 'life-lost') this.resetActors();
-      if (['ready', 'paused', 'life-lost'].includes(this.phase)) this.phase = 'playing';
+      if (['ready', 'paused', 'life-lost', 'level-clear'].includes(this.phase)) this.phase = 'playing';
     }
     pause() { if (this.phase === 'playing') this.phase = 'paused'; }
     queueTurn(direction) { if (this.phase === 'playing' && DIRECTIONS[direction]) this.queuedDirection = direction; }
@@ -91,10 +104,10 @@
       if (!value) return;
       this.pellets.delete(id); this.score += value;
       if (value === 50) {
-        this.powerRemaining = 7; this.combo = 0;
+        this.powerRemaining = this.powerDuration; this.combo = 0;
         if (this.monster.direction) this.monster.direction = DIRECTIONS[this.monster.direction].opposite;
       }
-      if (this.pellets.size === 0) this.phase = 'won';
+      if (this.pellets.size === 0) this.phase = 'level-clear';
     }
     chooseMonsterDirection() {
       const monster = this.monster;
@@ -105,7 +118,7 @@
       let target;
       if (monster.returning) target = MONSTER_START;
       else if (this.powerRemaining > 0) target = { x: Math.round(this.player.x), y: Math.round(this.player.y) };
-      else if (this.elapsed % 25 < 5) target = { x: 19, y: 1 };
+      else if (this.elapsed % 25 < this.scatterTime) target = { x: 19, y: 1 };
       else target = { x: Math.round(this.player.x), y: Math.round(this.player.y) };
       const distances = distancesFrom(target);
       let best = [], bestValue = -Infinity;
@@ -167,7 +180,7 @@
         const monster = this.monster;
         if (monster.release > 0) monster.release = Math.max(0, monster.release - dt);
         else {
-          const speed = monster.returning ? 7 : (this.powerRemaining > 0 ? 3 : 4.1);
+          const speed = monster.returning ? 7 : (this.powerRemaining > 0 ? this.frightSpeed : this.monsterSpeed);
           this.move(monster, speed * dt, () => this.chooseMonsterDirection(), () => {
             if (monster.returning && monster.x === MONSTER_START.x && monster.y === MONSTER_START.y) {
               monster.returning = false; monster.release = 1.4; monster.direction = null;
@@ -525,7 +538,15 @@
       context.font = `${Math.max(9, Math.round(cellHeight * 0.5))}px Silkscreen, monospace`;
       context.textAlign = 'center'; context.textBaseline = 'middle';
       context.fillText('POWER! CATCH THE MONSTER', WIDTH / 2, top + height / 2 - 1);
-      context.fillRect(0, HEIGHT - 3, WIDTH * Math.min(1, game.powerRemaining / 7), 3);
+      context.fillRect(0, HEIGHT - 3, WIDTH * Math.min(1, game.powerRemaining / game.powerDuration), 3);
+    }
+    // Otherwise the same row names the current level.
+    function drawLevelLabel() {
+      const top = (ROWS - 1) * cellHeight + 2, height = cellHeight - 2;
+      context.fillStyle = palette.muted;
+      context.font = `${Math.max(9, Math.round(cellHeight * 0.5))}px Silkscreen, monospace`;
+      context.textAlign = 'center'; context.textBaseline = 'middle';
+      context.fillText(`LEVEL ${game.level}`, WIDTH / 2, top + height / 2 - 1);
     }
     function draw() {
       context.clearRect(0, 0, WIDTH, HEIGHT); context.fillStyle = palette.paper; context.fillRect(0, 0, WIDTH, HEIGHT);
@@ -542,6 +563,7 @@
       if (sprite) { context.imageSmoothingEnabled = true; context.drawImage(sprite, px - 12 * spriteScale, py - 10.5967 * spriteScale, 24 * spriteScale, 21.1934 * spriteScale); context.imageSmoothingEnabled = false; }
       else { context.fillStyle = palette.ink; context.fillRect(px - 9 * spriteScale, py - 9 * spriteScale, 18 * spriteScale, 18 * spriteScale); }
       if (game.powerRemaining > 0 && ['playing', 'paused'].includes(game.phase)) drawPowerBanner();
+      else drawLevelLabel();
     }
     function renderLeaderboard() {
       const entries = globalEntries || leaderboard.entries;
@@ -592,12 +614,14 @@
         : game.phase === 'playing'
         ? game.powerRemaining > 0 ? 'POWER ON — CATCH THE MONSTER' : 'RUN. COLLECT. KEEP GOING.'
         : game.phase === 'ready' ? 'Game ready.'
-        : game.phase === 'life-lost' ? `${game.lives} LIVES LEFT` : overlays[game.phase]?.[0] || '';
+        : game.phase === 'life-lost' ? `${game.lives} LIVES LEFT`
+        : game.phase === 'level-clear' ? `Level ${game.level} clear. ${game.score} points.` : overlays[game.phase]?.[0] || '';
       if (stateText !== lastStatus) { status.textContent = stateText; lastStatus = stateText; }
       if (lastPhase !== game.phase) {
         lastPhase = game.phase;
         if (game.phase !== 'playing') stopStartAudio();
         let data = overlays[game.phase];
+        if (game.phase === 'level-clear') data = [`LEVEL ${game.level} CLEAR!`, `Level ${game.level + 1}: a faster monster and shorter power. Your score stays.`, 'NEXT LEVEL'];
         if (endedWithRecord) {
           const points = `${game.score.toLocaleString('en-US')} POINTS.`;
           data = ['NEW HIGH SCORE', game.phase === 'won' ? `LEVEL CLEAR. ${points}` : `${points} BEAT IT AGAIN.`, data[2]];
@@ -608,7 +632,7 @@
           overlayTitle.textContent = data[0]; overlayTitle.hidden = !data[0];
           overlayCopy.textContent = data[1]; overlayCopy.hidden = !data[1];
           startButton.textContent = data[2];
-          if (['life-lost', 'won', 'gameover'].includes(game.phase)) startButton.focus({ preventScroll: true });
+          if (['life-lost', 'level-clear', 'won', 'gameover'].includes(game.phase)) startButton.focus({ preventScroll: true });
         }
         // Offer every completed scoring run a name, including runs below the
         // record. The phase is already recorded, so nested renders cannot
@@ -742,7 +766,7 @@
       button.addEventListener('pointerdown', event => event.preventDefault());
       button.addEventListener('click', () => {
         if (nameEditing) return;
-        if (['ready', 'paused', 'life-lost'].includes(game.phase)) start(true);
+        if (['ready', 'paused', 'life-lost', 'level-clear'].includes(game.phase)) start(true);
         game.queueTurn(direction); render(); focusBoard();
       });
     }
