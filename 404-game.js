@@ -411,6 +411,14 @@
     const record = new HighScoreRecord(() => window.localStorage);
     const leaderboard = new LocalLeaderboard(() => window.localStorage);
     leaderboard.importLegacy(record.best, record.name);
+    // Shared Top 10 for all visitors (404-scores.js). Falls back to the local list.
+    const shared = window.Error404Scores && window.Error404Scores.enabled ? window.Error404Scores : null;
+    let globalEntries = null;
+    function applyGlobal(list) {
+      if (!Array.isArray(list)) return;
+      globalEntries = list; leaderboardSignature = ''; render();
+    }
+    function loadGlobal() { if (shared) shared.top().then(applyGlobal).catch(() => {}); }
     const makeRunId = () => `run:${globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`}`;
     const board = doc.getElementById('board');
     const overlay = doc.getElementById('game-overlay');
@@ -522,11 +530,12 @@
       }
     }
     function renderLeaderboard() {
-      const signature = JSON.stringify(leaderboard.entries);
+      const entries = globalEntries || leaderboard.entries;
+      const signature = JSON.stringify(entries);
       if (signature === leaderboardSignature) return;
       leaderboardSignature = signature;
       leaderboardList.replaceChildren();
-      leaderboard.entries.forEach((entry, index) => {
+      entries.forEach((entry, index) => {
         const row = doc.createElement('li'); row.className = 'leaderboard-row';
         for (const [className, text] of [
           ['leaderboard-rank', String(index + 1).padStart(2, '0')],
@@ -538,21 +547,23 @@
         }
         leaderboardList.append(row);
       });
-      leaderboardEmpty.hidden = leaderboard.entries.length > 0;
+      leaderboardEmpty.hidden = entries.length > 0;
     }
     function updateUI() {
       if (touchPause) { touchPause.textContent = game.phase === 'paused' ? 'RESUME' : 'PAUSE'; touchPause.disabled = !['playing', 'paused'].includes(game.phase); }
       record.consider(game.score);
-      highScore.textContent = String(record.best).padStart(5, '0');
+      const globalTop = globalEntries && globalEntries[0];
+      const showGlobalTop = !!globalTop && globalTop.score >= record.best;
+      highScore.textContent = String(showGlobalTop ? globalTop.score : record.best).padStart(5, '0');
       const legacy = leaderboard.entries.find(entry => entry.id === `legacy:${record.best}`);
       const representedBest = legacy || leaderboard.entries.find(entry => entry.score === record.best);
-      const bestName = record.name || representedBest?.name || '';
+      const bestName = showGlobalTop ? globalTop.name : (record.name || representedBest?.name || '');
       highScoreName.textContent = bestName;
       highScoreName.hidden = !bestName;
       const currentRunOwnsRecord = record.beatenThisRun && game.score === record.best && game.phase !== 'ready';
-      addNameButton.hidden = record.best <= 0 || !!bestName || currentRunOwnsRecord;
+      addNameButton.hidden = !!shared || record.best <= 0 || !!bestName || currentRunOwnsRecord;
       if (['won', 'gameover'].includes(game.phase) && game.score > 0 && !submittedRuns.has(runId)) {
-        pendingRun = { id: runId, score: game.score };
+        pendingRun = { id: runId, score: game.score, duration: Math.round(game.elapsed) };
       }
       submitRunButton.hidden = nameEditing || !pendingRun || submittedRuns.has(pendingRun.id);
       nameRow.hidden = nameEditing;
@@ -613,7 +624,7 @@
       const newRun = ['ready', 'won', 'gameover'].includes(game.phase);
       if (nameEditing) closeNameEntry(false);
       if (newRun) {
-        record.beginRun(); runId = makeRunId(); pendingRun = null; leaderboardFeedback.hidden = true;
+        record.beginRun(); runId = makeRunId(); pendingRun = null; leaderboardFeedback.hidden = true; loadGlobal();
       }
       game.start(); render(); focusBoard();
       if (explicitStart && newRun) {
@@ -695,6 +706,17 @@
       leaderboardFeedback.hidden = false;
       nameMessage.textContent = result.ranked === false ? 'Your score is outside the top ten. Try again!'
         : result.persisted ? 'Your score and name are saved.' : 'Saved for this page. Browser storage is unavailable.';
+      if (shared && context.kind === 'run') {
+        leaderboardFeedback.textContent = 'SAVING…'; leaderboardFeedback.hidden = false;
+        shared.submit({ id: context.id, name, score: context.score, duration: context.duration || 0 }).then(response => {
+          if (response.entries) applyGlobal(response.entries);
+          leaderboardFeedback.textContent = !response.ok ? 'SAVED ON THIS DEVICE ONLY.'
+            : response.rank ? `SAVED. RANK #${response.rank}.` : 'OUTSIDE TOP 10. GO AGAIN.';
+          nameMessage.textContent = response.ok && response.rank ? `Your score is number ${response.rank} of all players.` : leaderboardFeedback.textContent;
+        }).catch(() => {
+          leaderboardFeedback.textContent = 'OFFLINE. SAVED ON THIS DEVICE.';
+        });
+      }
       closeNameEntry();
       if (context.kind === 'run' && ['won', 'gameover'].includes(game.phase)) start();
     });
@@ -732,6 +754,7 @@
     window.addEventListener('pageshow', () => { lastTime = 0; render(); if (!frame) frame = requestAnimationFrame(tick); });
     logo.addEventListener('load', draw);
     resize(); render(); frame = requestAnimationFrame(tick);
+    loadGlobal();
     // Readable local diagnostics for browser QA; the engine is also Node-testable.
     window.error404Game = game;
     window.error404HighScore = record;

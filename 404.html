@@ -10,7 +10,8 @@
 <link rel="stylesheet" href="/404-game.css?v=game-nav-20260929">
 <link rel="stylesheet" href="/control-frames.css">
 <script src="/game-start-audio.js?v=20260928-start-only" defer></script>
-<script src="/404-game.js?v=20260928-start-only" defer></script>
+<script src="/404-scores.js?v=20261012" defer></script>
+<script src="/404-game.js?v=20261012-shared" defer></script>
 <script src="/404-background.js" defer></script>
 <script src="/control-frames.js" defer></script>
 </head>
@@ -77,7 +78,7 @@
   <aside class="leaderboard" aria-labelledby="leaderboard-title" aria-describedby="leaderboard-scope">
     <h2 id="leaderboard-title">HIGH SCORES</h2>
     <p class="leaderboard-challenge">CAN YOU BEAT THEM?</p>
-    <div class="high-score" aria-label="Top score saved in this browser">
+    <div class="high-score" aria-label="Top score">
       <div class="high-score-label">TOP SCORE</div>
       <strong id="high-score">00000</strong>
       <div class="high-score-name-row" id="high-score-name-row">
@@ -100,7 +101,7 @@
     <p class="leaderboard-empty" id="leaderboard-empty">BE THE FIRST TO LEAVE A SCORE.</p>
     <button class="primary submit-score" id="submit-run-score" type="button" hidden>ADD YOUR SCORE</button>
     <p class="leaderboard-feedback" id="leaderboard-feedback" role="status" aria-live="polite" hidden></p>
-    <p class="sr-only" id="leaderboard-scope">Scores are saved in this browser.</p>
+    <p class="sr-only" id="leaderboard-scope">Top ten scores of all players.</p>
   </aside>
   </div>
   </div>
