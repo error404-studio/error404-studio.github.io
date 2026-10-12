@@ -1,10 +1,10 @@
 /* ERROR 404 – shared Top 10 for the 404 game.
-   Backend: Google Apps Script web app bound to the sheet
-   "ERROR 404 – HIGH SCORES (hra na webe)" (Drive of ibamatus@gmail.com).
+   Backend: Google Apps Script web app "ERROR 404 HIGH SCORES" (ibamatus@gmail.com),
+   scores kept in its Script properties (SCORES, SKRYTE_MENA for moderation).
    Empty ENDPOINT = the game keeps its browser-only leaderboard. */
 (function () {
   'use strict';
-  const ENDPOINT = '';
+  const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzROZjA1VtcFagxUTTqYwmVuoyuZd_qsweDl1aGb66Bpo04CEplEK1smkJL0eK-9Bpu/exec';
   const TIMEOUT = 8000;
   const clean = list => Array.isArray(list) ? list
     .filter(e => e && typeof e.id === 'string' && typeof e.name === 'string' && Number.isSafeInteger(e.score) && e.score > 0)
