@@ -63,7 +63,7 @@
       this.restart();
     }
     restart() {
-      this.score = 0; this.lives = 3; this.elapsed = 0;
+      this.score = 0; this.lives = 1; this.elapsed = 0;   // one try per game (2026-10-12)
       this.phase = 'ready'; this.powerRemaining = 0; this.combo = 0;
       this.pellets = new Map();
       for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
@@ -459,7 +459,7 @@
       paused: ['PAUSED', 'Your robot is safe. Ready when you are.', 'RESUME'],
       'life-lost': ['CAUGHT!', 'A new life. The dots and your score stay.', 'CONTINUE'],
       won: ['LEVEL CLEAR!', 'Every dot collected. Good company, great escape.', 'PLAY AGAIN'],
-      gameover: ['GAME OVER', 'Three lives. One monster. One more try?', 'TRY AGAIN']
+      gameover: ['GAME OVER', 'One life. One monster. One more try?', 'TRY AGAIN']
     };
     function resize() {
       const dpr = Math.min(devicePixelRatio || 1, 2);
@@ -491,8 +491,11 @@
       const monster = game.monster, x = (monster.x + 0.5) * cellWidth, y = (monster.y + 0.5) * cellHeight;
       context.save(); context.translate(x - 11 * spriteScale, y - 11 * spriteScale); context.scale(spriteScale, spriteScale);
       const frightened = game.powerRemaining > 0 && !monster.returning;
+      // 2026-10-12: monster is red, the player is white. A frightened monster
+      // turns grey and blinks white in the last two seconds of power.
+      const blink = frightened && game.powerRemaining < 2 && Math.floor(game.powerRemaining * 5) % 2 === 0;
       if (!monster.returning) {
-        context.fillStyle = frightened ? palette.red : palette.ink;
+        context.fillStyle = frightened ? (blink ? palette.ink : palette.muted) : palette.red;
         context.beginPath(); context.moveTo(5, 0); context.lineTo(17, 0); context.lineTo(17, 3);
         context.lineTo(20, 3); context.lineTo(20, 7); context.lineTo(23, 7); context.lineTo(23, 23);
         context.lineTo(18, 23); context.lineTo(18, 20); context.lineTo(14, 20); context.lineTo(14, 23);
@@ -500,13 +503,35 @@
         context.lineTo(0, 23); context.lineTo(0, 7); context.lineTo(3, 7); context.lineTo(3, 3);
         context.lineTo(5, 3); context.closePath(); context.fill();
       }
-      context.fillStyle = monster.returning || frightened ? palette.ink : palette.red;
+      context.fillStyle = frightened ? palette.paper : palette.ink;
       context.fillRect(5, 7, 5, 6); context.fillRect(14, 7, 5, 6);
-      context.fillStyle = palette.paper;
+      context.fillStyle = frightened ? palette.ink : palette.paper;
       const d = DIRECTIONS[monster.direction] || { x: 0, y: 0 };
       context.fillRect(6 + d.x, 9 + d.y, 2, 3); context.fillRect(15 + d.x, 9 + d.y, 2, 3);
-      if (frightened) { context.fillStyle = palette.ink; context.fillRect(8, 17, 7, 2); }
+      if (frightened) { context.fillStyle = palette.paper; context.fillRect(6, 16, 3, 2); context.fillRect(9, 14, 3, 2); context.fillRect(12, 16, 3, 2); context.fillRect(15, 14, 3, 2); }
       context.restore();
+    }
+    // The robot head from the red logo, recoloured white once it has loaded.
+    let whiteRobot = null;
+    function playerSprite() {
+      if (whiteRobot) return whiteRobot;
+      if (!logo.complete || !logo.naturalWidth) return null;
+      const sprite = doc.createElement('canvas'); sprite.width = 667; sprite.height = 589;
+      const g = sprite.getContext('2d');
+      if (!g) return null;
+      g.drawImage(logo, 1594, 602, 667, 589, 0, 0, 667, 589);
+      g.globalCompositeOperation = 'source-in'; g.fillStyle = palette.ink; g.fillRect(0, 0, 667, 589);
+      return (whiteRobot = sprite);
+    }
+    // While power is on, the bottom wall row explains it and counts it down.
+    function drawPowerBanner() {
+      const top = (ROWS - 1) * cellHeight + 2, height = cellHeight - 2;
+      context.fillStyle = palette.paper; context.fillRect(0, top, WIDTH, height);
+      context.fillStyle = palette.ink;
+      context.font = `${Math.max(9, Math.round(cellHeight * 0.5))}px Silkscreen, monospace`;
+      context.textAlign = 'center'; context.textBaseline = 'middle';
+      context.fillText('POWER! CATCH THE MONSTER', WIDTH / 2, top + height / 2 - 1);
+      context.fillRect(0, HEIGHT - 3, WIDTH * Math.min(1, game.powerRemaining / 7), 3);
     }
     function draw() {
       context.clearRect(0, 0, WIDTH, HEIGHT); context.fillStyle = palette.paper; context.fillRect(0, 0, WIDTH, HEIGHT);
@@ -519,15 +544,10 @@
       }
       drawMonster();
       const px = (game.player.x + 0.5) * cellWidth, py = (game.player.y + 0.5) * cellHeight;
-      if (game.powerRemaining > 0) {
-        context.strokeStyle = palette.ink; context.lineWidth = 1;
-        context.strokeRect(px - 13 * spriteScale, py - 13 * spriteScale, 26 * spriteScale, 26 * spriteScale);
-      }
-      if (logo.complete && logo.naturalWidth) context.drawImage(logo, 1594, 602, 667, 589, px - 12 * spriteScale, py - 10.5967 * spriteScale, 24 * spriteScale, 21.1934 * spriteScale);
-      else { context.fillStyle = palette.red; context.fillRect(px - 9 * spriteScale, py - 9 * spriteScale, 18 * spriteScale, 18 * spriteScale); }
-      if (!reduced.matches && game.phase === 'playing' && game.powerRemaining > 0) {
-        context.fillStyle = palette.red; context.fillRect(0, HEIGHT - 3, WIDTH * game.powerRemaining / 7, 3);
-      }
+      const sprite = playerSprite();
+      if (sprite) context.drawImage(sprite, px - 12 * spriteScale, py - 10.5967 * spriteScale, 24 * spriteScale, 21.1934 * spriteScale);
+      else { context.fillStyle = palette.ink; context.fillRect(px - 9 * spriteScale, py - 9 * spriteScale, 18 * spriteScale, 18 * spriteScale); }
+      if (game.powerRemaining > 0 && ['playing', 'paused'].includes(game.phase)) drawPowerBanner();
     }
     function renderLeaderboard() {
       const entries = globalEntries || leaderboard.entries;
