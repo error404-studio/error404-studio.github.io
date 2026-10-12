@@ -10,12 +10,17 @@
     .filter(e => e && typeof e.id === 'string' && typeof e.name === 'string' && Number.isSafeInteger(e.score) && e.score > 0)
     .map(e => ({ id: e.id, name: e.name.slice(0, 16), score: e.score, createdAt: Number(e.createdAt) || 0 }))
     .slice(0, 10) : null;
-  function request(options) {
+  function attempt(options) {
     const controller = typeof AbortController === 'function' ? new AbortController() : null;
     const timer = setTimeout(() => controller && controller.abort(), TIMEOUT);
     return fetch(ENDPOINT, Object.assign({ redirect: 'follow', cache: 'no-store', signal: controller && controller.signal }, options))
       .then(response => { if (!response.ok) throw new Error('HTTP ' + response.status); return response.json(); })
       .finally(() => clearTimeout(timer));
+  }
+  // Google occasionally answers a cold start with an HTML error page: try once more.
+  // A repeated POST is safe, the backend ignores a run id it already stored.
+  function request(options) {
+    return attempt(options).catch(() => new Promise(resolve => setTimeout(resolve, 700)).then(() => attempt(options)));
   }
   window.Error404Scores = {
     enabled: !!ENDPOINT,
