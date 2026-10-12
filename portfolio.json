@@ -1,6 +1,15 @@
 {
   "films": [
     {
+      "title": "CSOB / Pujcky",
+      "shortTitle": "ČSOB",
+      "src": "videa/csob-pujcky/index.m3u8",
+      "poster": "nahlady/csob-pujcky-20261012.jpg",
+      "type": "hls",
+      "width": 1920,
+      "height": 1080
+    },
+    {
       "title": "Middle Finger",
       "src": "assets/media/middle-finger/index.m3u8",
       "poster": "assets/media/middle-finger-poster.jpg",
@@ -8,15 +17,6 @@
       "width": 1920,
       "height": 1080,
       "shortTitle": "MiddleFinger"
-    },
-    {
-      "title": "CSOB / Home",
-      "src": "assets/media/frameio/csobhome/index.m3u8",
-      "poster": "assets/media/frameio/csobhome-poster.jpg",
-      "type": "hls",
-      "width": 1920,
-      "height": 1080,
-      "shortTitle": "ČSOB"
     },
     {
       "title": "CSOB / Bistro",
@@ -28,13 +28,13 @@
       "shortTitle": "ČSOB"
     },
     {
-      "title": "CSOB / Pujcky",
-      "shortTitle": "ČSOB",
-      "src": "videa/csob-pujcky/index.m3u8",
-      "poster": "nahlady/csob-pujcky.jpg",
+      "title": "CSOB / Home",
+      "src": "assets/media/frameio/csobhome/index.m3u8",
+      "poster": "assets/media/frameio/csobhome-poster.jpg",
       "type": "hls",
       "width": 1920,
-      "height": 1080
+      "height": 1080,
+      "shortTitle": "ČSOB"
     },
     {
       "title": "JT / 20 Years",
