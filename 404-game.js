@@ -495,6 +495,10 @@
     const TILE = 28;
     let WIDTH = COLS * TILE, HEIGHT = ROWS * TILE, cellWidth = TILE, cellHeight = TILE, spriteScale = 1;
     const palette = { paper: '#000000', ink: '#f4f0e8', red: '#ff2929', muted: '#aaa8a2', wall: '#161616' };
+    // Dots change colour every level (2026-10-12): white, yellow, turquoise,
+    // green, orange, then the cycle repeats. Never red: red is the monsters.
+    const DOT_COLORS = ['#f4f0e8', '#ffd400', '#2ee6d6', '#3ddc5a', '#ff9a1f'];
+    const dotColor = () => DOT_COLORS[(game.level - 1) % DOT_COLORS.length];
     let lastTime = 0, frame = 0, lastPhase = '', lastStatus = '';
     let nameEditing = false, nameContext = null;
     let runId = makeRunId(), pendingRun = null, leaderboardSignature = '';
@@ -575,7 +579,7 @@
     // Otherwise the same row names the current level.
     function drawLevelLabel() {
       const top = (ROWS - 1) * cellHeight + 2, height = cellHeight - 2;
-      context.fillStyle = palette.muted;
+      context.fillStyle = dotColor();
       context.font = `${Math.max(9, Math.round(cellHeight * 0.5))}px Silkscreen, monospace`;
       context.textAlign = 'center'; context.textBaseline = 'middle';
       context.fillText(`LEVEL ${game.level}`, WIDTH / 2, top + height / 2 - 1);
@@ -583,7 +587,7 @@
     function draw() {
       context.clearRect(0, 0, WIDTH, HEIGHT); context.fillStyle = palette.paper; context.fillRect(0, 0, WIDTH, HEIGHT);
       drawWalls();
-      context.fillStyle = palette.ink;
+      context.fillStyle = dotColor();
       for (const [id, value] of game.pellets) {
         const x = (id % COLS + 0.5) * cellWidth, y = (Math.floor(id / COLS) + 0.5) * cellHeight;
         const size = (value === 50 ? 8 : 3) * spriteScale;
