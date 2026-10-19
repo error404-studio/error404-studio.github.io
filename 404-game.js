@@ -504,9 +504,9 @@
     let runId = makeRunId(), pendingRun = null, leaderboardSignature = '';
     const submittedRuns = new Set();
     const overlays = {
-      ready: ['BEAT THE HIGH SCORE', '', 'START GAME'],
+      ready: ['BEAT THE HIGH SCORE', 'YOU HAVE 3 LIVES. DON\'T GET CAUGHT.', 'START GAME'],
       paused: ['PAUSED', 'Your robot is safe. Ready when you are.', 'RESUME'],
-      'life-lost': ['CAUGHT!', 'A new life. The dots and your score stay.', 'CONTINUE'],
+      'life-lost': ['CAUGHT!', '', 'CONTINUE'],
       won: ['LEVEL CLEAR!', 'Every dot collected. Good company, great escape.', 'PLAY AGAIN'],
       gameover: ['GAME OVER', 'Three lives. More monsters every level. One more try?', 'TRY AGAIN']
     };
@@ -600,6 +600,33 @@
       else { context.fillStyle = palette.ink; context.fillRect(px - 9 * spriteScale, py - 9 * spriteScale, 18 * spriteScale, 18 * spriteScale); }
       if (game.powerRemaining > 0 && ['playing', 'paused'].includes(game.phase)) drawPowerBanner();
       else drawLevelLabel();
+      drawLives();
+    }
+    // 2026-10-19 (Matúš): three small robots = three lives, bottom-left of the board; lost = red X.
+    // Red pixel X over a lost life (stair-stepped, matches the pixel font).
+    function drawCross(x, y, w, h) {
+      const n = 8, cs = Math.max(1, Math.round(Math.min(w, h) / n)), ox = Math.round(x + (w - cs * n) / 2), oy = Math.round(y + (h - cs * n) / 2);
+      context.fillStyle = palette.red;
+      for (let k = 0; k < n - 1; k++) { context.fillRect(ox + k * cs, oy + k * cs, 2 * cs, 2 * cs); context.fillRect(ox + (n - 2 - k) * cs, oy + k * cs, 2 * cs, 2 * cs); }
+    }
+    function drawLives() {
+      const top = (ROWS - 1) * cellHeight + 2, height = cellHeight - 2, sprite = playerSprite();
+      const h = Math.round(height * 0.62), w = Math.round(h * 24 / 21.19), gap = Math.round(w * 0.45);
+      let x = Math.round(cellWidth * 0.6);
+      context.font = `${Math.max(9, Math.round(cellHeight * 0.5))}px Silkscreen, monospace`;
+      context.textAlign = 'left'; context.textBaseline = 'middle'; context.fillStyle = palette.ink;
+      context.fillText('LIVES', x, top + height / 2 - 1);
+      x += Math.ceil(context.measureText('LIVES').width) + gap;
+      const blinkLost = game.phase === 'life-lost' && Math.floor(performance.now() / 300) % 2 === 0;
+      for (let i = 0; i < 3; i++) {
+        const alive = i < game.lives;
+        const y = top + (height - h) / 2;
+        context.globalAlpha = alive ? 1 : 0.35;
+        if (sprite) context.drawImage(sprite, x, y, w, h);
+        context.globalAlpha = 1;
+        if (!alive && !(i === game.lives && blinkLost)) drawCross(x, y, w, h);
+        x += w + gap;
+      }
     }
     function renderLeaderboard() {
       const entries = globalEntries || leaderboard.entries;
@@ -671,6 +698,10 @@
         if (data) {
           overlayTitle.textContent = data[0]; overlayTitle.hidden = !data[0];
           overlayCopy.textContent = data[1]; overlayCopy.hidden = !data[1];
+          if (game.phase === 'life-lost') { overlayCopy.textContent = game.lives === 1 ? 'LAST LIFE! The dots and your score stay.' : `${game.lives} LIVES LEFT. The dots and your score stay.`; overlayCopy.hidden = false; }
+          const row = doc.getElementById('life-row');
+          if (row) { row.hidden = !['ready', 'life-lost', 'gameover'].includes(game.phase); const X = '<svg class="x" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true">' + [0,1,2,3,4,5,6].map(k => `<rect x="${k}" y="${k}" width="2" height="2"/><rect x="${6 - k}" y="${k}" width="2" height="2"/>`).join('') + '</svg>';
+            row.innerHTML = [0, 1, 2].map(i => `<span class="life${i < game.lives ? '' : ' lost'}${i === game.lives && game.phase === 'life-lost' ? ' just-lost' : ''}"><img src="${whiteRobot.src}" alt="">${i < game.lives ? '' : X}</span>`).join(''); }
           startButton.textContent = data[2];
           if (['life-lost', 'level-clear', 'won', 'gameover'].includes(game.phase)) startButton.focus({ preventScroll: true });
         }
