@@ -1,7 +1,7 @@
 /* ERROR 404 maze game. The white ERROR 404 robot collects dots and flees red
    monsters: one on level 1, two on level 2, three from level 3 (2026-10-12).
    Three lives. Only the explicitly approved Let's play cue runs on a
-   user-started new game. Scores go to the shared Top 10 (404-scores.js). */
+   user-started new game. Scores go to the shared Top 5 (404-scores.js). */
 (function (root, factory) {
   'use strict';
   const api = factory();
@@ -364,7 +364,7 @@
       }
       for (const id of fresh.seenIds) this.seenIds.add(id);
       for (const id of entries.keys()) this.seenIds.add(id);
-      this.entries = [...entries.values()].sort((a, b) => b.score - a.score || a.createdAt - b.createdAt || a.id.localeCompare(b.id)).slice(0, 10);
+      this.entries = [...entries.values()].sort((a, b) => b.score - a.score || a.createdAt - b.createdAt || a.id.localeCompare(b.id)).slice(0, 5);   // Top 5 (2026-10-19)
     }
     refresh() {
       this.merge(this.read());
@@ -779,18 +779,18 @@
         nameError.hidden = false; nameInput.setAttribute('aria-invalid', 'true');
         render(); nameInput.focus({ preventScroll: true }); return;
       }
-      leaderboardFeedback.textContent = result.ranked === false ? 'OUTSIDE TOP 10. GO AGAIN.'
+      leaderboardFeedback.textContent = result.ranked === false ? 'OUTSIDE TOP FIVE. GO AGAIN.'
         : result.persisted ? (result.rank ? `SAVED. RANK #${result.rank}.` : 'SCORE SAVED.') : 'SAVED FOR THIS SESSION.';
       leaderboardFeedback.hidden = false;
-      nameMessage.textContent = result.ranked === false ? 'Your score is outside the top ten. Try again!'
+      nameMessage.textContent = result.ranked === false ? 'Your score is outside the top five. Try again!'
         : result.persisted ? 'Your score and name are saved.' : 'Saved for this page. Browser storage is unavailable.';
       if (shared && context.kind === 'run') {
         leaderboardFeedback.textContent = 'SAVING…'; leaderboardFeedback.hidden = false;
         shared.submit({ id: context.id, name, score: context.score, duration: context.duration || 0 }).then(response => {
           if (response.entries) applyGlobal(response.entries);
           leaderboardFeedback.textContent = !response.ok ? 'SAVED ON THIS DEVICE ONLY.'
-            : response.rank ? `SAVED. RANK #${response.rank}.` : 'OUTSIDE TOP 10. GO AGAIN.';
-          nameMessage.textContent = response.ok && response.rank ? `Your score is number ${response.rank} of all players.` : leaderboardFeedback.textContent;
+            : response.rank && response.rank <= 5 ? `SAVED. RANK #${response.rank}.` : 'OUTSIDE TOP FIVE. GO AGAIN.';
+          nameMessage.textContent = response.ok && response.rank && response.rank <= 5 ? `Your score is number ${response.rank} of all players.` : leaderboardFeedback.textContent;
         }).catch(() => {
           leaderboardFeedback.textContent = 'OFFLINE. SAVED ON THIS DEVICE.';
         });
