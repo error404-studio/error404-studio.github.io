@@ -1,4 +1,4 @@
-/* ERROR 404 – shared Top 10 for the 404 game.
+/* ERROR 404 – shared Top 5 for the 404 game (Top 10 until 2026-10-19).
    Backend: Google Apps Script web app "ERROR 404 HIGH SCORES" (ibamatus@gmail.com),
    scores kept in its Script properties (SCORES, SKRYTE_MENA for moderation).
    Empty ENDPOINT = the game keeps its browser-only leaderboard. */
@@ -9,7 +9,7 @@
   const clean = list => Array.isArray(list) ? list
     .filter(e => e && typeof e.id === 'string' && typeof e.name === 'string' && Number.isSafeInteger(e.score) && e.score > 0)
     .map(e => ({ id: e.id, name: e.name.slice(0, 16), score: e.score, createdAt: Number(e.createdAt) || 0 }))
-    .slice(0, 10) : null;
+    .slice(0, 5) : null;
   function attempt(options) {
     const controller = typeof AbortController === 'function' ? new AbortController() : null;
     const timer = setTimeout(() => controller && controller.abort(), TIMEOUT);
