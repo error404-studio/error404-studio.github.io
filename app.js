@@ -26,7 +26,7 @@
     "portfolio": "<div class=\"portfolio-heading\"><div class=\"panel-copy\"><h1 id=\"panel-title\">LESS TALK<br>MORE PLAY</h1><p class=\"work-intro\">Made with AI – Shaped by us</p></div><div class=\"panel-motif portfolio-motif\" aria-hidden=\"true\"></div></div><div class=\"work-gallery\" aria-busy=\"true\"><p>Loading films…</p></div>"
 };
   function rect(el){if(!el)return null;const b=el.getBoundingClientRect();return {x:b.left-canvasOrigin.x,y:b.top-canvasOrigin.y,w:b.width,h:b.height};}
-  function cacheLayout(){const surface=(dialog.open?panelCanvas:canvas).getBoundingClientRect();canvasOrigin={x:surface.left,y:surface.top};logoBox=rect($('.logo-window'));const targets=dialog.open?'.panel-top,.work-grid,.panel-foot,.profile-grid,.contact-links,.contact-emails,.project-feature':'nav a .nav-label,.hero-type,.slogan-hint,.logo-game-touch-hint,.orbit-label,.home-footer';protectedBoxes=[...document.querySelectorAll(targets)].map(rect);navBoxes=dialog.open?[]:[...document.querySelectorAll("nav a .nav-label")].map(rect);if(dialog.open){for(const copy of document.querySelectorAll('.panel-copy')){const walker=document.createTreeWalker(copy,NodeFilter.SHOW_TEXT);let node;while((node=walker.nextNode())){if(!node.textContent.trim())continue;const range=document.createRange();range.selectNodeContents(node);for(const b of range.getClientRects())protectedBoxes.push({x:b.left-canvasOrigin.x,y:b.top-canvasOrigin.y,w:b.width,h:b.height});}}}motifBox=dialog.open?rect($('.panel-motif')):null;
+  function cacheLayout(){const surface=(dialog.open?panelCanvas:canvas).getBoundingClientRect();canvasOrigin={x:surface.left,y:surface.top};logoBox=rect($('.logo-window'));const targets=dialog.open?'.panel-top,.work-grid,.panel-foot,.profile-grid,.contact-links,.contact-emails,.project-feature':'header nav a .nav-label,.hero-type,.slogan-hint,.logo-game-touch-hint,.orbit-label,.home-footer';protectedBoxes=[...document.querySelectorAll(targets)].map(rect);navBoxes=dialog.open?[]:[...document.querySelectorAll("header nav a .nav-label")].map(rect);if(dialog.open){for(const copy of document.querySelectorAll('.panel-copy')){const walker=document.createTreeWalker(copy,NodeFilter.SHOW_TEXT);let node;while((node=walker.nextNode())){if(!node.textContent.trim())continue;const range=document.createRange();range.selectNodeContents(node);for(const b of range.getClientRects())protectedBoxes.push({x:b.left-canvasOrigin.x,y:b.top-canvasOrigin.y,w:b.width,h:b.height});}}}motifBox=dialog.open?rect($('.panel-motif')):null;
     if(motifBox&&activeSection==='contact'&&window.innerWidth>850){
       const heading=rect($('.contact-intro h1'));
       const pitch=Math.max(2,Math.floor(motifBox.w/iconPatterns.contact[0].length));
@@ -146,6 +146,7 @@
     window.dispatchEvent(new Event('sectionchange'));
     panel.querySelectorAll('video').forEach(video => video.pause());
     opener = a; activeSection = section; panel.innerHTML = content[section];
+    document.querySelectorAll('.panel-nav a').forEach(x => x.setAttribute('aria-current', x.hash === a.hash ? 'page' : 'false'));
     panel.classList.remove('entering');
     if (!dialog.open) dialog.showModal();
     dialog.scrollTop = 0; panelStart = performance.now(); panel.classList.add('entering');
