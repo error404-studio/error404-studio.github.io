@@ -349,3 +349,14 @@ nav .nav-label .nav-amp{margin:0;font:700 1.05em/1 Arial,Helvetica,sans-serif}
 }
 /* Programmatic dialog title focus announces the section without a selected control. */
 #panel-title[tabindex="-1"]:focus{outline:none}
+
+/* 2026-10-19 (Matúš): larger menu; WORK / CONTACT / ABOUT stays on top and works on every page, also inside Work, Contact and About. */
+nav a{font-size:20px}
+@media(max-width:850px){nav a{font-size:17px}}
+@media(max-width:560px){nav a{font-size:15px}}
+@media(max-width:380px){nav a{font-size:13px}}
+.panel-top{position:sticky;top:0;z-index:10;justify-content:space-between;align-items:center;gap:20px;padding:24px 3.7vw;background:var(--paper)}
+.panel-top .panel-nav{display:flex;align-items:center;justify-content:flex-end;gap:26px}
+.panel-nav a[aria-current="page"]{color:var(--accent)}
+@media(max-width:700px){.panel-top{padding:22px 24px;gap:16px}.panel-top .panel-nav{gap:16px}}
+@media(max-width:420px){.panel-top{padding:18px 16px;gap:12px}.panel-top .panel-nav{gap:12px}#close-panel{font-size:13px}}
