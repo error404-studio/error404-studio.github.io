@@ -1,6 +1,15 @@
 {
   "films": [
     {
+      "title": "J&T / USPECH",
+      "shortTitle": "J&T",
+      "src": "videa/jt-uspech/index.m3u8",
+      "poster": "nahlady/jt-uspech.jpg",
+      "type": "hls",
+      "width": 1920,
+      "height": 1080
+    },
+    {
       "title": "CSOB / Pujcky",
       "shortTitle": "ČSOB",
       "src": "videa/csob-pujcky/index.m3u8",
@@ -19,15 +28,6 @@
       "shortTitle": "MiddleFinger"
     },
     {
-      "title": "CSOB / Bistro",
-      "src": "assets/media/frameio/csobbistro/index.m3u8",
-      "poster": "assets/media/frameio/csobbistro-poster.jpg",
-      "type": "hls",
-      "width": 1920,
-      "height": 1080,
-      "shortTitle": "ČSOB"
-    },
-    {
       "title": "CSOB / Home",
       "src": "assets/media/frameio/csobhome/index.m3u8",
       "poster": "assets/media/frameio/csobhome-poster.jpg",
@@ -37,7 +37,16 @@
       "shortTitle": "ČSOB"
     },
     {
-      "title": "JT / 20 Years",
+      "title": "CSOB / Bistro",
+      "src": "assets/media/frameio/csobbistro/index.m3u8",
+      "poster": "assets/media/frameio/csobbistro-poster.jpg",
+      "type": "hls",
+      "width": 1920,
+      "height": 1080,
+      "shortTitle": "ČSOB"
+    },
+    {
+      "title": "J&T / 20 Years",
       "src": "assets/media/frameio/jt20years-web-16x9-v2/index.m3u8",
       "poster": "assets/media/frameio/jt20years-poster.jpg",
       "type": "hls",
