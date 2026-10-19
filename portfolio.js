@@ -36,14 +36,6 @@
   }
   async function playFilm(film,media,poster,status){
     releasePlayer();status.hidden=true;
-    if(kind(film)==='hls'&&film.src.startsWith('https://error404-studio-films.zts2v8c4cw.chatgpt.site/preview-media/')){
-      const filmUrl=new URL(film.src),key=filmUrl.pathname.split('/')[2];
-      const frame=document.createElement('iframe');
-      frame.src=filmUrl.origin+'/player.html?film='+encodeURIComponent(key);
-      frame.title=film.title+' film player';frame.allow='autoplay; fullscreen';frame.allowFullscreen=true;
-      frame.style.cssText='position:absolute;inset:0;display:block;width:100%;height:100%;border:0;background:#000';
-      current={frame,poster};poster.hidden=true;media.append(frame);frame.focus();return;
-    }
     const video=document.createElement('video');
     video.controls=true;video.playsInline=true;video.preload='none';video.poster=film.poster;
     video.setAttribute('aria-label',film.title+' film');video.tabIndex=0;
