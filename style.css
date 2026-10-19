@@ -360,3 +360,9 @@ nav a{font-size:20px}
 .panel-nav a[aria-current="page"]{color:var(--accent)}
 @media(max-width:700px){.panel-top{padding:22px 24px;gap:16px}.panel-top .panel-nav{gap:16px}}
 @media(max-width:420px){.panel-top{padding:18px 16px;gap:12px}.panel-top .panel-nav{gap:12px}#close-panel{font-size:13px}}
+
+/* 2026-10-19 (Matúš): pixel house instead of the word HOME. */
+#close-panel,#back-panel,.home{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0;line-height:0}
+.home-ico{display:block;width:22px;height:22px}
+#close-panel:is(:hover,:focus-visible) .home-ico,#back-panel:is(:hover,:focus-visible) .home-ico{color:var(--accent)}
+@media(max-width:560px){.home-ico{width:20px;height:20px}}
