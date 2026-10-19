@@ -234,3 +234,14 @@ h1{color:var(--ink)}
 .topbar .home{min-width:44px;min-height:44px;padding:0;line-height:0}
 .home-ico{display:block;width:22px;height:22px}
 @media(max-width:560px){.home-ico{width:20px;height:20px}}
+
+/* 2026-10-19 (Matúš): lives as robots, lost life = red pixel X */
+.life-row{display:flex;gap:14px;justify-content:center}
+.life-row[hidden]{display:none}
+.life-row .life{position:relative;display:block;width:40px}
+.life-row img{display:block;width:40px;height:auto;image-rendering:pixelated}
+.life-row .lost img{opacity:.35}
+.life-row .x{position:absolute;left:50%;top:50%;width:40px;height:40px;transform:translate(-50%,-50%);fill:var(--accent)}
+.life-row .just-lost .x{animation:xin .45s steps(3) 1 both}
+@keyframes xin{0%{opacity:0;transform:translate(-50%,-50%) scale(1.8)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.overlay p{font-family:Silkscreen,monospace;font-size:13px;letter-spacing:.04em}
