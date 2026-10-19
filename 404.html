@@ -7,11 +7,11 @@
 <meta name="theme-color" content="#000000">
 <title>404 — Play the wrong level | ERROR 404</title>
 <link rel="icon" type="image/png" href="/assets/logo-red-original.png">
-<link rel="stylesheet" href="/404-game.css?v=home-ico-20261019">
+<link rel="stylesheet" href="/404-game.css?v=20261019-lives">
 <link rel="stylesheet" href="/control-frames.css">
 <script src="/game-start-audio.js?v=20260928-start-only" defer></script>
 <script src="/404-scores.js?v=20261019-top5" defer></script>
-<script src="/404-game.js?v=20261019-top5" defer></script>
+<script src="/404-game.js?v=20261019-lives" defer></script>
 <script src="/404-background.js" defer></script>
 <script src="/control-frames.js" defer></script>
 </head>
@@ -54,6 +54,7 @@
       <canvas id="game-canvas" width="588" height="476" tabindex="0" role="application" aria-label="Robot maze. Arrow keys or W A S D move. P or Escape pauses." aria-describedby="game-instructions game-status">Use a browser with canvas support to play the robot maze.</canvas>
       <div class="overlay" id="game-overlay">
         <h2 id="overlay-title">BEAT THE HIGH SCORE</h2>
+        <div class="life-row" id="life-row" aria-hidden="true"></div>
         <p id="overlay-copy" hidden></p>
         <button class="primary" type="button" id="start-game">START GAME</button>
       </div>
