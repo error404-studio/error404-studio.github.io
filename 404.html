@@ -7,11 +7,11 @@
 <meta name="theme-color" content="#000000">
 <title>404 — Play the wrong level | ERROR 404</title>
 <link rel="icon" type="image/png" href="/assets/logo-red-original.png">
-<link rel="stylesheet" href="/404-game.css?v=nav-top-20261019">
+<link rel="stylesheet" href="/404-game.css?v=home-ico-20261019">
 <link rel="stylesheet" href="/control-frames.css">
 <script src="/game-start-audio.js?v=20260928-start-only" defer></script>
-<script src="/404-scores.js?v=20261012c" defer></script>
-<script src="/404-game.js?v=20261012-dots" defer></script>
+<script src="/404-scores.js?v=20261019-top5" defer></script>
+<script src="/404-game.js?v=20261019-top5" defer></script>
 <script src="/404-background.js" defer></script>
 <script src="/control-frames.js" defer></script>
 </head>
@@ -34,7 +34,7 @@
      This is browser-local play data, not visitor tracking or a global ranking. -->
 <main class="page">
   <header class="topbar">
-    <a class="home" href="/" aria-label="Back to home">← HOME</a>
+    <a class="home" href="/" aria-label="Back to home" title="Home" data-no-text-pixels><svg class="home-ico" viewBox="0 0 9 9" width="22" height="22" aria-hidden="true" focusable="false" shape-rendering="crispEdges" fill="currentColor"><rect x="4" y="0" width="1" height="1"/><rect x="3" y="1" width="1" height="1"/><rect x="4" y="1" width="1" height="1"/><rect x="5" y="1" width="1" height="1"/><rect x="2" y="2" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="5" y="2" width="1" height="1"/><rect x="6" y="2" width="1" height="1"/><rect x="1" y="3" width="1" height="1"/><rect x="2" y="3" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/><rect x="5" y="3" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/><rect x="7" y="3" width="1" height="1"/><rect x="0" y="4" width="1" height="1"/><rect x="1" y="4" width="1" height="1"/><rect x="2" y="4" width="1" height="1"/><rect x="3" y="4" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="5" y="4" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/><rect x="7" y="4" width="1" height="1"/><rect x="8" y="4" width="1" height="1"/><rect x="1" y="5" width="1" height="1"/><rect x="2" y="5" width="1" height="1"/><rect x="3" y="5" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="5" y="5" width="1" height="1"/><rect x="6" y="5" width="1" height="1"/><rect x="7" y="5" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="2" y="6" width="1" height="1"/><rect x="6" y="6" width="1" height="1"/><rect x="7" y="6" width="1" height="1"/><rect x="1" y="7" width="1" height="1"/><rect x="2" y="7" width="1" height="1"/><rect x="6" y="7" width="1" height="1"/><rect x="7" y="7" width="1" height="1"/><rect x="1" y="8" width="1" height="1"/><rect x="2" y="8" width="1" height="1"/><rect x="6" y="8" width="1" height="1"/><rect x="7" y="8" width="1" height="1"/></svg></a>
     <nav aria-label="Main navigation">
       <a href="/#portfolio" aria-label="Work"><span class="nav-label">WORK</span></a>
       <a href="/#contact" aria-label="Contact"><span class="nav-label">CONTACT</span></a>
@@ -76,8 +76,8 @@
   </div>
   </section>
   <aside class="leaderboard" aria-labelledby="leaderboard-title" aria-describedby="leaderboard-scope">
-    <h2 id="leaderboard-title">HIGH SCORES</h2>
-    <p class="leaderboard-challenge">CAN YOU BEAT THEM?</p>
+    <h2 id="leaderboard-title">TOP FIVE ERRORS</h2>
+    <p class="leaderboard-challenge">HIGH SCORES · CAN YOU BEAT THEM?</p>
     <div class="high-score" aria-label="Top score">
       <div class="high-score-label">TOP SCORE</div>
       <strong id="high-score">00000</strong>
@@ -97,11 +97,11 @@
       </form>
       <span class="sr-only" id="score-name-message" role="status" aria-live="polite"></span>
     </div>
-    <ol class="leaderboard-list" id="leaderboard-list" aria-label="Top ten scores"></ol>
+    <ol class="leaderboard-list" id="leaderboard-list" aria-label="Top five scores"></ol>
     <p class="leaderboard-empty" id="leaderboard-empty">BE THE FIRST TO LEAVE A SCORE.</p>
     <button class="primary submit-score" id="submit-run-score" type="button" hidden>ADD YOUR SCORE</button>
     <p class="leaderboard-feedback" id="leaderboard-feedback" role="status" aria-live="polite" hidden></p>
-    <p class="sr-only" id="leaderboard-scope">Top ten scores of all players.</p>
+    <p class="sr-only" id="leaderboard-scope">Top five scores of all players.</p>
   </aside>
   </div>
   </div>
